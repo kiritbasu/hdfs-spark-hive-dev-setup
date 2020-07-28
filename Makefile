@@ -3,6 +3,7 @@ current_dir := $(dir $(mkfile_path))
 hive_home := $(addsuffix tools/apache-hive-2.3.7-bin, $(current_dir))
 hadoop_home := $(addsuffix tools/hadoop-2.7.7, $(current_dir))
 spark_home := $(addsuffix tools/spark-2.4.4-bin, $(current_dir))
+j_home := /usr/java/jdk1.8.0_261-amd64
 
 #########################################
 # Configuration and start/stop commands #
@@ -60,9 +61,11 @@ configure_spark:
 	echo 'export SPARK_LOCAL_DIRS=${current_dir}data/spark-rdd'
 
 start_spark:
-	${spark_home}/sbin/start-all.sh
+	${spark_home}/sbin/start-yarn.sh
+	${spark_home}/sbin/start-dfs.sh
 stop_spark:
-	${spark_home}/sbin/stop-all.sh
+	${spark_home}/sbin/stop-yarn.sh
+	${spark_home}/sbin/stop-dfs.sh
 
 configure_hive:
 	echo "Installing JDBC for Java 8. If you use other Java version see: https://jdbc.postgresql.org/download.html#current"
