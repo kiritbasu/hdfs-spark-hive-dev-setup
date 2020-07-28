@@ -2,7 +2,7 @@ mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(dir $(mkfile_path))
 hive_home := $(addsuffix tools/apache-hive-2.3.7-bin, $(current_dir))
 hadoop_home := $(addsuffix tools/hadoop-2.7.7, $(current_dir))
-spark_home := $(addsuffix tools/spark-2.4.4-bin, $(current_dir))
+spark_home := $(addsuffix tools/spark-2.4.4-bin-hadoop2.7, $(current_dir))
 j_home := /usr/java/jdk1.8.0_261-amd64
 
 #########################################
@@ -69,7 +69,7 @@ stop_spark:
 
 configure_hive:
 	echo "Installing JDBC for Java 8. If you use other Java version see: https://jdbc.postgresql.org/download.html#current"
-	wget https://jdbc.postgresql.org/download/postgresql-9.4.1209.jar
+	wget --no-check-certificate https://jdbc.postgresql.org/download/postgresql-9.4.1209.jar
 	mv postgresql-9.4.1209.jar ${hive_home}/lib/
 	#enable JDBC connection
 	echo '<?xml version="1.0" encoding="UTF-8" standalone="no"?>' >> ${hive_home}/conf/hive-site.xml
@@ -102,7 +102,7 @@ start_hive_beeline_client:
 	${hive_home}/bin/beeline -u jdbc:hive2://localhost:10000
 start_hive_postgres_metastore:
 	echo "Starting postgres docker container"
-	docker run -d --name hive-metastore -p 5432:5432 earthquakesan/hive-metastore-postgresql:2.1.0
+	docker run -d --name hive-metastore -p 5432:5432 bde2020/hive-metastore-postgresql:2.3.0
 	sleep 5;
 	echo "Running Hive Metastore service"
 	${hive_home}/bin/hive --service metastore
