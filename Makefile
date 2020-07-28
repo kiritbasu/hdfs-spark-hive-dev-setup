@@ -61,11 +61,11 @@ configure_spark:
 	echo 'export SPARK_LOCAL_DIRS=${current_dir}data/spark-rdd'
 
 start_spark:
-	${spark_home}/sbin/start-yarn.sh
-	${spark_home}/sbin/start-dfs.sh
+	${spark_home}/sbin/start-master.sh
+	${spark_home}/sbin/start-slaves.sh spark://sdp:7077
 stop_spark:
-	${spark_home}/sbin/stop-yarn.sh
-	${spark_home}/sbin/stop-dfs.sh
+	${spark_home}/sbin/stop-master.sh
+	${spark_home}/sbin/stop-slaves.sh
 
 configure_hive:
 	echo "Installing JDBC for Java 8. If you use other Java version see: https://jdbc.postgresql.org/download.html#current"
