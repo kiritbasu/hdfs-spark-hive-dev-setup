@@ -1,8 +1,8 @@
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(dir $(mkfile_path))
-hive_home := $(addsuffix tools/apache-hive-2.1.0-bin, $(current_dir))
-hadoop_home := $(addsuffix tools/hadoop-2.7.2, $(current_dir))
-spark_home := $(addsuffix tools/spark-2.0.0-bin, $(current_dir))
+hive_home := $(addsuffix tools/apache-hive-2.3.7-bin, $(current_dir))
+hadoop_home := $(addsuffix tools/hadoop-2.7.7, $(current_dir))
+spark_home := $(addsuffix tools/spark-2.4.4-bin, $(current_dir))
 
 #########################################
 # Configuration and start/stop commands #
@@ -12,21 +12,19 @@ download: download_hadoop download_spark download_hive
 
 download_hadoop:
 	mkdir -p ${current_dir}tools
-	cd ${current_dir}tools; wget http://www-us.apache.org/dist/hadoop/common/hadoop-2.7.2/hadoop-2.7.2.tar.gz && tar -xvf hadoop-2.7.2.tar.gz && rm -rf hadoop-2.7.2.tar.gz
+	cd ${current_dir}tools; wget https://archive.apache.org/dist/hadoop/common/hadoop-2.7.7/hadoop-2.7.7.tar.gz && tar -xvf hadoop-2.7.7.tar.gz && rm -rf hadoop-2.7.7.tar.gz
 
 download_spark:
 	mkdir -p ${current_dir}tools
-	cd ${current_dir}tools; wget https://dl.dropboxusercontent.com/u/4882345/packages/spark-2.0.0-bin.tgz && tar -xvf spark-2.0.0-bin.tgz && rm -rf spark-2.0.0-bin.tgz
+	cd ${current_dir}tools; wget https://archive.apache.org/dist/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz && tar -xvf spark-2.4.4-bin-hadoop2.7.tgz && rm -rf spark-2.4.4-bin-hadoop2.7.tgz
 
 download_hive:
 	mkdir -p ${current_dir}tools
-	cd ${current_dir}tools; wget http://www-us.apache.org/dist/hive/hive-2.1.0/apache-hive-2.1.0-bin.tar.gz && tar -xvf apache-hive-2.1.0-bin.tar.gz && rm -rf apache-hive-2.1.0-bin.tar.gz
+	cd ${current_dir}tools; wget https://apache.claz.org/hive/hive-2.3.7/apache-hive-2.3.7-bin.tar.gz && tar -xvf apache-hive-2.3.7-bin.tar.gz && rm -rf apache-hive-2.3.7-bin.tar.gz
 
 configure: configure_hadoop configure_spark
 
 configure_hadoop:
-	#install Ubuntu dependencies
-	sudo apt-get install -y ssh rsync
 	#Set JAVA_HOME explicitly
 	sed -i "s#.*export JAVA_HOME.*#export JAVA_HOME=${JAVA_HOME}#g" ${hadoop_home}/etc/hadoop/hadoop-env.sh 
 	#Set HADOOP_CONF_DIR explicitly
