@@ -82,7 +82,34 @@ configure_spark:
 configure_spark_oap:
 	#setup persistent memory config
 	echo '<persistentMemoryPool><numanode id="0"><initialPath>/mnt/pmem0</initialPath></numanode><numanode id="1"><initialPath>/mnt/pmem1</initialPath></numanode></persistentMemoryPool>' >> ${spark_home}/conf/persistent-memory.xml
+	#setup OAP
+	echo 'spark.sql.extensions                  org.apache.spark.sql.OapExtensions' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.files                       /root/oap/jars/oap-cache-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-common-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-spark-0.8.0-with-spark-2.4.4.jar' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.executor.extraClassPath     /root/oap/jars/oap-cache-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-common-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-spark-0.8.0-with-spark-2.4.4.jar' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.driver.extraClassPath       /root/oap/jars/oap-cache-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-common-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-spark-0.8.0-with-spark-2.4.4.jar' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.executor.memoryOverhead                  		   50g' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.driver.memory					   50g' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.executor.memory					   50g' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.executor.instances                                   6' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.yarn.numa.enabled                                    true' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.executorEnv.MEMKIND_ARENA_NUM_PER_KIND               1' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.memory.offHeap.enabled                               false' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.speculation                                          false' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.sql.oap.fiberCache.persistent.memory.initial.size    256g' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.sql.oap.fiberCache.persistent.memory.reserved.size   50g' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.sql.oap.cache.guardian.memory.size	           50g' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.sql.oap.parquet.data.cache.enable           	   true' >> ${spark_home}/conf/spark-defaults.conf
+	echo '# PM on Guava' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.sql.oap.fiberCache.memory.manager                    pm' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.oap.cache.strategy                                   vmem' >> ${spark_home}/conf/spark-defaults.conf
+	echo '#NoEvict' >> ${spark_home}/conf/spark-defaults.conf
+	echo '#spark.sql.oap.fiberCache.memory.manager                     hybrid' >> ${spark_home}/conf/spark-defaults.conf
+	echo '#spark.oap.cache.strategy                                    noevict' >> ${spark_home}/conf/spark-defaults.conf
+	echo '# DRAM Cache' >> ${spark_home}/conf/spark-defaults.conf
+	echo '#spark.sql.oap.fiberCache.memory.manager                    offheap' >> ${spark_home}/conf/spark-defaults.conf
+	echo '#spark.sql.oap.fiberCache.offheap.memory.size               50g' >> ${spark_home}/conf/spark-defaults.conf
 
+	
 start_spark:
 	${spark_home}/sbin/start-master.sh
 	${spark_home}/sbin/start-slaves.sh spark://sdp:7077
