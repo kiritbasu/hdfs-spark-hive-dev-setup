@@ -8,6 +8,17 @@ j_home := /usr/java/jdk1.8.0_261-amd64
 #########################################
 # Configuration and start/stop commands #
 #########################################
+configure_pmem_first_time:
+	ndctl create-namespace -m fsdax -r region0
+	ndctl create-namespace -m fsdax -r region1
+	mkdir /mnt/pmem0	
+	mkdir /mnt/pmem1
+	mkfs.ext4 -b 4096 -E stride=512 -F /dev/pmem0	
+	mkfs.ext4 -b 4096 -E stride=512 -F /dev/pmem1
+	
+mount_pmem:
+	mount -o dax /dev/pmem0 /mnt/pmem0
+	mount -o dax /dev/pmem1 /mnt/pmem1
 
 download: download_hadoop download_spark download_hive
 
@@ -19,6 +30,14 @@ download_spark:
 	mkdir -p ${current_dir}tools
 	cd ${current_dir}tools; wget --no-check-certificate https://archive.apache.org/dist/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz && tar -xvf spark-2.4.4-bin-hadoop2.7.tgz && rm -rf spark-2.4.4-bin-hadoop2.7.tgz
 
+download_spark_oap:
+	mkdir -p ${current_dir}tools
+	cd ${current_dir}tools; wget --no-check-certificate https://github.com/Intel-bigdata/OAP/releases/download/v0.8.0-spark-2.4.4/oap-product-0.8.0-bin-spark-2.4.4.tar.gz && oap-product-0.8.0-bin-spark-2.4.4.tar.gz && rm -rf oap-product-0.8.0-bin-spark-2.4.4.tar.gz
+	
+download_vmemcache:
+	mkdir -p ${current_dir}tools
+	cd ${current_dir}tools; wget --no-check-certificate https://github.com/Intel-bigdata/OAP/releases/download/v0.8.0-spark-2.4.4/libvmemcache-0.8.rpm && rpm -i libvmemcache*.rpm
+	
 download_hive:
 	mkdir -p ${current_dir}tools
 	cd ${current_dir}tools; wget --no-check-certificate https://apache.claz.org/hive/hive-2.3.7/apache-hive-2.3.7-bin.tar.gz && tar -xvf apache-hive-2.3.7-bin.tar.gz && rm -rf apache-hive-2.3.7-bin.tar.gz
@@ -59,6 +78,10 @@ configure_spark:
 	echo 'export SPARK_MASTER_IP=127.0.0.1'>> ${spark_home}/conf/spark-env.sh
 	mkdir -p ${current_dir}data/spark-rdd
 	echo 'export SPARK_LOCAL_DIRS=${current_dir}data/spark-rdd'
+
+configure_spark_oap:
+	#setup persistent memory config
+	echo '<persistentMemoryPool><numanode id="0"><initialPath>/mnt/pmem0</initialPath></numanode><numanode id="1"><initialPath>/mnt/pmem1</initialPath></numanode></persistentMemoryPool>' >> ${spark_home}/conf/persistent-memory.xml
 
 start_spark:
 	${spark_home}/sbin/start-master.sh
