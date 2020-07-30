@@ -32,11 +32,11 @@ download_spark:
 
 download_spark_oap:
 	mkdir -p ${current_dir}tools
-	cd ${current_dir}tools; wget --no-check-certificate https://github.com/Intel-bigdata/OAP/releases/download/v0.8.0-spark-2.4.4/oap-product-0.8.0-bin-spark-2.4.4.tar.gz && oap-product-0.8.0-bin-spark-2.4.4.tar.gz && rm -rf oap-product-0.8.0-bin-spark-2.4.4.tar.gz
+	cd ${current_dir}tools; wget --no-check-certificate https://github.com/Intel-bigdata/OAP/releases/download/v0.8.0-spark-2.4.4/oap-product-0.8.0-bin-spark-2.4.4.tar.gz && tar -xvf oap-product-0.8.0-bin-spark-2.4.4.tar.gz && rm -rf oap-product-0.8.0-bin-spark-2.4.4.tar.gz
 	
 download_vmemcache:
 	mkdir -p ${current_dir}tools
-	cd ${current_dir}tools; wget --no-check-certificate https://github.com/Intel-bigdata/OAP/releases/download/v0.8.0-spark-2.4.4/libvmemcache-0.8.rpm && rpm -i libvmemcache*.rpm
+	cd ${current_dir}tools; wget --no-check-certificate https://github.com/Intel-bigdata/OAP/releases/download/v0.8.0-spark-2.4.4/libvmemcache-0.8.rpm && sudo rpm -i libvmemcache*.rpm
 	
 download_hive:
 	mkdir -p ${current_dir}tools
@@ -84,9 +84,9 @@ configure_spark_oap:
 	echo '<persistentMemoryPool><numanode id="0"><initialPath>/mnt/pmem0</initialPath></numanode><numanode id="1"><initialPath>/mnt/pmem1</initialPath></numanode></persistentMemoryPool>' >> ${spark_home}/conf/persistent-memory.xml
 	#setup OAP
 	echo 'spark.sql.extensions                  org.apache.spark.sql.OapExtensions' >> ${spark_home}/conf/spark-defaults.conf
-	echo 'spark.files                       /root/oap/jars/oap-cache-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-common-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-spark-0.8.0-with-spark-2.4.4.jar' >> ${spark_home}/conf/spark-defaults.conf
-	echo 'spark.executor.extraClassPath     /root/oap/jars/oap-cache-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-common-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-spark-0.8.0-with-spark-2.4.4.jar' >> ${spark_home}/conf/spark-defaults.conf
-	echo 'spark.driver.extraClassPath       /root/oap/jars/oap-cache-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-common-0.8.0-with-spark-2.4.4.jar:/root/oap/jars/oap-spark-0.8.0-with-spark-2.4.4.jar' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.files                      /home/hivetest/hadoop-spark-hive/tools/haddop-oap-0.8.0/jars/oap-cache-0.8.0-with-spark-2.4.4.jar;/home/hivetest/hadoop-spark-hive/tools/haddop-oap-0.8.0/jars/oap-common-0.8.0-with-spark-2.4.4.jar;/home/hivetest/hadoop-spark-hive/tools/haddop-oap-0.8.0/jars/oap-spark-0.8.0-with-spark-2.4.4.jar' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.executor.extraClassPath     /home/hivetest/hadoop-spark-hive/tools/haddop-oap-0.8.0/jars/oap-cache-0.8.0-with-spark-2.4.4.jar;/home/hivetest/hadoop-spark-hive/tools/haddop-oap-0.8.0/jars/oap-common-0.8.0-with-spark-2.4.4.jar;/home/hivetest/hadoop-spark-hive/tools/haddop-oap-0.8.0/jars/oap-spark-0.8.0-with-spark-2.4.4.jar' >> ${spark_home}/conf/spark-defaults.conf
+	echo 'spark.driver.extraClassPath       /home/hivetest/hadoop-spark-hive/tools/haddop-oap-0.8.0/jars/oap-cache-0.8.0-with-spark-2.4.4.jar;/home/hivetest/hadoop-spark-hive/tools/haddop-oap-0.8.0/jars/oap-common-0.8.0-with-spark-2.4.4.jar;/home/hivetest/hadoop-spark-hive/tools/haddop-oap-0.8.0/jars/oap-spark-0.8.0-with-spark-2.4.4.jar' >> ${spark_home}/conf/spark-defaults.conf
 	echo 'spark.executor.memoryOverhead                  		   50g' >> ${spark_home}/conf/spark-defaults.conf
 	echo 'spark.driver.memory					   50g' >> ${spark_home}/conf/spark-defaults.conf
 	echo 'spark.executor.memory					   50g' >> ${spark_home}/conf/spark-defaults.conf
